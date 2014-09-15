@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block main_content %}
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;border-color:#bbb;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#bbb;color:#594F4F;background-color:#E0FFEB;border-top-width:1px;border-bottom-width:1px;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#bbb;color:#493F3F;background-color:#9DE0AD;border-top-width:1px;border-bottom-width:1px;}
+
+td.favorite {background-color:#fdff58;}
+th.favorite {background-color:#fdffa5;}
+
+</style>
+
+<h1>Пользователь {{ user.username }}</h1>
+
+<br>
+<br>
+
+<b><p>Личный кабинет</p></b>
+<br>
+<br>
+
+{% if auctions_in_run %}
+
+<b>Участие в аукционах:</b>
+<br>
+<br>
+
+<table class="tg">
+    <tr>
+    <th class="in_use">Название аукциона</th>
+    <th class="in_use">Текущая ставка</th>
+    <th class="in_use">Дата окончания аукциона</th>
+
+  </tr>
+{%for auction in auctions_in_run%}
+  <tr>
+    <td class="in_use"><a href='/auction/{{ auction.category.name }}/{{ auction.id }}'>{{ auction.title }}</a></th>
+    <td class="in_use">{{auction.current_bid}}</th>
+    <td class="in_use">{{auction.end_date}}</th>
+  </tr>
+{%endfor%}
+</table>
+{% endif %}
+
+{% if won_auctions %}
+<br>
+<br>
+<br>
+
+<b>Участие в аукционах:</b>
+<br>
+<br>
+
+<table class="tg">
+    <tr>
+    <th class="tg-031e">Название аукциона</th>
+    <th class="tg-031e">Победная ставка</th>
+    <th class="tg-031e">Дата окончания аукциона</th>
+
+  </tr>
+{%for auction in won_auctions%}
+  <tr>
+    <td class="tg-031e"><a href='/auction/{{ auction.category.name }}/{{ auction.id }}'>{{ auction.title }}</a></th>
+    <td class="tg-031e">{{auction.current_bid}}</th>
+    <td class="tg-031e">{{auction.end_date}}</th>
+  </tr>
+{%endfor%}
+</table>
+{% endif %}
+
+{% if favorite_auctions %}
+<br>
+<br>
+<br>
+
+<b>В избранном:</b>
+<br>
+<br>
+
+<table class="tg">
+    <tr>
+    <th class="favorite">Название аукциона</th>
+    <th class="favorite">Текущая ставка</th>
+    <th class="favorite">Дата окончания аукциона</th>
+
+  </tr>
+{%for auction in favorite_auctions%}
+  <tr>
+    <td class="favorite"><a href='/auction/{{ auction.category.name }}/{{ auction.id }}'>{{ auction.title }}</a></th>
+    <td class="favorite">{{auction.current_bid}}</th>
+    <td class="favorite">{{auction.end_date}}</th>
+  </tr>
+{%endfor%}
+</table>
+{% endif %}
+
+{% endblock %}

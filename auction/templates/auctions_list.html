@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block main_content %}
+<h1>Доступные аукционы</h1>
+<p><img src="images/img03.jpg" width="600" height="250" alt="" /></p>
+{%if auctions%}
+
+<ul>
+    {%for auction in auctions%}
+        <li><a href='/auction/{{ category.name }}/{{ auction.id }}'>{{ auction.title }}</a></li>
+    {%endfor%}
+    </ul>
+{%else%}
+    <p>В данной теме не создано ни одного аукциона</p>
+{%endif%}
+{% endblock %}

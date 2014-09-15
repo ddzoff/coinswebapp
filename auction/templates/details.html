@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block main_content %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+    if('{{ in_favorites }}' == 'True')
+    {
+        $(".from_favorites").show();
+        $(".to_favorite").hide();
+    }
+    else
+    {
+        $(".from_favorites").hide();
+        $(".to_favorite").show();
+    }
+
+    if($('.is_auto_bid').is(':checked'))
+    {
+            $("#bid_amount").hide();
+            $("#max_auto_bid").show();
+            $("#bid_amount_lb").hide();
+            $("#max_auto_bid_lb").show();
+    }
+    else
+    {
+            $("#bid_amount").show();
+            $("#max_auto_bid").hide();
+            $("#bid_amount_lb").show();
+            $("#max_auto_bid_lb").hide();
+    }
+
+    $('.is_auto_bid').change(function() {
+        if($(this).is(':checked'))
+        {
+            $("#bid_amount").hide();
+            $("#max_auto_bid").show();
+            $("#bid_amount_lb").hide();
+            $("#max_auto_bid_lb").show();
+        }
+        else
+        {
+            $("#bid_amount").show();
+            $("#max_auto_bid").hide();
+            $("#bid_amount_lb").show();
+            $("#max_auto_bid_lb").hide();
+        }
+    }
+
+    );
+
+    $('.to_favorite').click(function(){
+            $.post("/auction/favorites/",
+            {auction_id: {{auction.id}},
+             csrfmiddlewaretoken:'{{ csrf_token }}',
+            },
+            function(data){
+                $(".from_favorites").show();
+                $(".to_favorite").hide();
+                })
+            .fail(function(xhr) {
+            });
+            return false;
+
+    });
+
+    $('.from_favorites').click(function(){
+            $.post("/auction/favorites/",
+            {auction_id: {{auction.id}},
+             csrfmiddlewaretoken:'{{ csrf_token }}',
+            },
+            function(data){
+                $(".from_favorites").hide();
+                $(".to_favorite").show();
+                })
+            .fail(function(xhr) {
+            });
+            return false;
+
+    });
+});
+
+
+</script>
+
+<h1>Лот № {{ auction.id }}</h1>
+
+<br>
+<br>
+
+<b><p>{{ auction.title }}</p></b>
+<br>
+<form id="login_form" method="post" action="/auction/bid/">{% csrf_token %}
+    <table width="600" border="1">
+        <tr>
+            <td align="right" colspan="2">
+                <img class="to_favorite" width="60" height="50" src="{{ STATIC_URL }}images/favorites-add.jpg" alt="В избранное">
+                <img class="from_favorites" width="60" height="50" src="{{ STATIC_URL }}images/favorite-rmv.jpeg" alt="Убрать из избранного">
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="5" width="40%" align="center">ФОТО</td>
+            <td HEIGHT="50">Описание: {{ auction.description }}</td>
+        </tr>
+        <tr>
+            <td HEIGHT="50"></td>
+        </tr>
+        <tr>
+            <td HEIGHT="50">Начальная цена: {{ auction.start_price }}</td>
+        </tr>
+        <tr>
+            <td HEIGHT="50">Текущая цена: {{ current_bid }}</td>
+        </tr>
+        <tr>
+            <td HEIGHT="50">Минимальная ставка: {{ auction.min_bid }}</td>
+        </tr>
+        {% if is_start == False%}
+        <tr>
+            <td HEIGHT="50" colspan="2">
+                Данный аукцион начнется {{ start_date }}
+            </td>
+        </tr>
+        {% elif is_end == True %}
+        <tr>
+            <td HEIGHT="50" colspan="2">
+                Аукцион завершен, победил <a href="/auction/profile/" accesskey="4" title="">{{ auction.winner.username }}</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td HEIGHT="50" colspan="2">
+                <lable><input name="is_auto_bid" class="is_auto_bid" type="checkbox" unchecked>Делать автоматические
+                    ставки
+                </lable>
+            </td>
+        </tr>
+        <tr>
+            <td HEIGHT="50" colspan="2" class="bid_amount_td">
+                <lable id="bid_amount_lb"> Сумма ставки: <input name="bid_amount" id="bid_amount" type="text" size="10"/></lable>
+                <lable id="max_auto_bid_lb"> Максимальная сумма ставки: <input name="max_auto_bid" id="max_auto_bid" type="text" size="10"/>
+                </lable>
+            </td>
+        </tr>
+        <tr>
+            <td HEIGHT="50" colspan="2" align="right">
+                <input type="hidden" name="auction_id" value={{auction.id}}>
+                <input type="submit" value="Ставка" size="40">
+            </td>
+        </tr>
+        {% endif %}
+    </table>
+
+</form>
+
+<br>
+<br>
+
+<style type="text/css">
+    .tg {border-collapse:collapse;border-spacing:0;border-color:#bbb;}
+    .tg td{padding:10px
+    5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#bbb;color:#594F4F;background-color:#E0FFEB;border-top-width:1px;border-bottom-width:1px;}
+    .tg th{font-size:14px;font-weight:normal;padding:10px
+    5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#bbb;color:#493F3F;background-color:#9DE0AD;border-top-width:1px;border-bottom-width:1px;}
+</style>
+
+{% if bids %}
+<table class="tg" align="center" width="300">
+    <tr>
+        <th class="tg-031e">Ставка <br></th>
+        <th class="tg-031e">Пользователь</th>
+        <th class="tg-031e">Дата</th>
+    </tr>
+    {% for bid in bids %}
+    <tr align="center">
+        {% if bid.is_auto_bid %}
+            <td class="tg-031e">{{ bid.bid_amount }}*</td>
+        {% else %}
+            <td class="tg-031e">{{ bid.bid_amount }}</td>
+        {% endif %}
+        <td class="tg-031e">{{ bid.created_by }}</td>
+        <td class="tg-031e">{{ bid.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block main_content %}
+<h1>Регистрация</h1>
+
+        {% if registered %}
+        <br /><strong>Спасибо за регистрацию!</strong>
+        <a href="/home/">Вернуться на главную</a><br />
+        {% else %}
+        <br /><br />
+
+        <form id="user_form" method="post" action="/register/"
+                enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            {{ user_form.as_p }}
+
+            <input type="submit" name="submit" value="Register" />
+        </form>
+        {% endif %}
+{% endblock %}

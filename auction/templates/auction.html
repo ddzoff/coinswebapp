@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block main_content %}
+<h1>Категории аукционов</h1>
+<p><img src="images/img03.jpg" width="600" height="250" alt="" /></p>
+{%if category_list%}
+
+<ul>
+    {%for category in category_list%}
+        <li><a href="/auction/{{ category.name }}">{{ category.display_name }}</a></li>
+    {%endfor%}
+    </ul>
+{%else%}
+    <p>В данный момент нв системе не задано ниодной категории лотов..</p>
+{%endif%}
+{% endblock %}
